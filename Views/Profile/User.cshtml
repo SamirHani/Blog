@@ -1,0 +1,40 @@
+﻿@model Blog.Models.Profile
+
+@{
+	ViewData["Title"] = "User Profile";
+}
+
+<!-- Container for the Profile Card -->
+<div class="container mt-5">
+	<div class="card profile-card">
+		<div class="card-body text-center">
+			<img src="@Model.ImgUrl" alt="Profile Image" class="profile-img mb-3" />
+			<h4 class="card-title">@Model.Name</h4>
+			<p class="card-text">@Model.Bio</p>
+			<div>
+				<a asp-action="Edit" class="btn btn-primary">Edit Profile</a>
+				<a asp-action="Index" class="btn btn-secondary">Back to List</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Add custom styles for dark mode -->
+<style>
+	body {
+		background-color: #121212; /* Dark background */
+		color: #ffffff; /* White text */
+	}
+	.profile-card {
+		background-color: #1e1e1e; /* Darker card background */
+		border-radius: 15px;
+		padding: 20px;
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+	}
+	.profile-img {
+		border-radius: 50%; /* Make image round */
+		width: 150px; /* Set width for the image */
+		height: 150px; /* Set height for the image */
+		object-fit: cover; /* Maintain aspect ratio */
+	}
+</style>

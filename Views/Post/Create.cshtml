@@ -1,0 +1,78 @@
+﻿@model Blog.ViewModels.CreatePostViewModel
+
+@{
+    ViewData["Title"] = "Create Post";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center">New Post</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <form asp-action="Create" method="post" enctype="multipart/form-data" class="bg-light p-4 border rounded shadow">
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="control-label"></label>
+                            <input asp-for="Title" class="form-control" placeholder="What's happening?" id="TitleInput" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Content" class="control-label"></label>
+                            <textarea asp-for="Content" class="form-control" rows="4" placeholder="Write your post..." id="ContentTextarea"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+                
+                        <div class="form-group mb-3">
+                            <label for="Language" class="control-label">Select Language</label>
+                            <select asp-for="Language" class="form-select w-auto" id="Language" onchange="updateTextDirection()">
+                                <option value="en">English</option>
+                                <option value="ar">Arabic</option>
+                            </select>
+                        </div>
+
+                <br />
+              <partial name="_UploadPreviewImage" model="Model" />
+
+                <div class="form-group text-center d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary btn-lg">Post</button>
+                    <a asp-controller="Feed" asp-action="index" class="btn d-grid align-items-center btn-secondary">Discard</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+<partial name="_ScriptPreviewImage" model="Model" />
+
+<!-- for change the text direction based on select in the same website -->
+<script>
+    function updateTextDirection() {
+        const language = document.getElementById('Language').value;
+        const titleInput = document.getElementById('TitleInput');
+        const contentTextarea = document.getElementById('ContentTextarea');
+
+        if (language === 'ar') {
+            titleInput.style.direction = 'rtl';
+            titleInput.style.textAlign = 'right';
+            titleInput.placeholder = "عنوان المنشور";
+            contentTextarea.style.direction = 'rtl';
+            contentTextarea.style.textAlign = 'right';
+            contentTextarea.placeholder = "محتوي المنشور";
+        } else {
+            titleInput.style.direction = 'ltr';
+            titleInput.style.textAlign = 'left';
+            contentTextarea.style.direction = 'ltr';
+            contentTextarea.style.textAlign = 'left';
+            titleInput.placeholder = "What's happening?";
+            contentTextarea.placeholder = "Write your post...";
+
+
+        }
+    }
+</script>

@@ -1,0 +1,17 @@
+﻿<script>
+    // this script is for the image preview
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('imagePreview');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Image Preview" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%;" />`;
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.innerHTML = '';
+        }
+    }
+</script>

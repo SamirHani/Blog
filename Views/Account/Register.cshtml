@@ -1,0 +1,82 @@
+﻿@model Blog.ViewModels.RegisterViewModel
+
+@{
+	ViewData["Title"] = "Register";
+}
+
+<h1>Register</h1>
+
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Register">
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Email" class="control-label"></label>
+				<input asp-for="Email" id="emailInput" class="form-control" />
+				<span asp-validation-for="Email" id="div1" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="UserName" class="control-label"></label>
+				<input asp-for="UserName" class="form-control" />
+				<span asp-validation-for="UserName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Password" class="control-label"></label>
+				<input asp-for="Password" class="form-control" />
+				<span asp-validation-for="Password" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="ConfirmPassword" class="control-label"></label>
+				<input asp-for="ConfirmPassword" class="form-control" />
+				<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+				<label asp-for="RememberMe" class="control-label"></label>
+				<span asp-validation-for="RememberMe" class="text-danger"></span>
+			</div>
+
+			<br />
+			<div class="form-group">
+			   <input type="submit" value="Sign Up" class="btn btn-success btn-lg w-50 my-3" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="Login" class="btn btn-primary btn-lg mt-2">You have an account? Login</a>
+</div>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$("#emailInput").on('blur', function() {
+		var emailValue = $(this).val();  // Get the value from the input field
+
+		// Send an AJAX request to the specified URL
+		$.ajax({
+			url: "/Account/CheckForUserEmailPattern",  // Change this to your desired URL
+			method: "POST",  // Typically, you'll want to use POST for this kind of operation
+			data: { email: emailValue },  // Sending the email value in the request body
+			success: function(result) {
+				// Handle the response from the server
+
+					if (result) {
+						$("#div1").html("Available email.").removeClass('text-danger').addClass('text-success');
+					} else {
+						$("#div1").html("Invalid email or Email already Used").removeClass('text-success').addClass('text-danger');
+					}
+			},
+			error: function(xhr, status, error) {
+				// Handle any errors that may occur
+				console.error("An error occurred: " + error);
+			}
+		});
+	});
+</script>

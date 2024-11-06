@@ -1,0 +1,66 @@
+﻿@using Blog.ViewModels
+@model List<PostCommentsViewModel>
+<style>
+    .comments-section {
+        margin-top: 20px;
+    }
+
+    .comment-card {
+        max-width: 600px;
+        margin: 10px auto;
+    }
+
+    .profile-image {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+    .username {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .comment-date {
+        font-size: 0.9em;
+        color: #888;
+    }
+
+    .comment-content p {
+        margin: 0;
+        font-size: 1em;
+    }
+
+    .comment-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="comments-section container">
+    
+    @foreach (var comment in Model)
+    {
+            <div class="card comment-card">
+                <div class="card-body">
+                    <div class="comment-header d-flex align-items-center mb-3">
+                        <img src="@comment.ProfileImage" alt="@comment.UserName's profile picture" class="profile-image me-3" />
+                        <div class="comment-user-details">
+                            <h5 class="username m-0">@comment.UserName</h5>
+                            <p class="comment-date m-0">@comment.CreatedAt.ToString("MMMM dd, yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                    <div class="comment-content">
+                        <p>@comment.Content</p>
+                    @if (!string.IsNullOrEmpty(comment.CommentImage))
+                    {
+                                <img src="@comment.CommentImage" alt="Attached image for the comment" class="comment-image" />
+                    }
+                    </div>
+                </div>
+            </div>
+    }
+</div>

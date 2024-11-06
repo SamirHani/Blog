@@ -1,0 +1,11 @@
+﻿<!-- this part for previewing and upload the image but this is without the script you should include the script when you use it-->
+<div class="form-group mb-3">
+    <label for="Image" class="control-label">Upload Image</label>
+    <div class="input-group align-items-center">
+        <input type="file" id="Image" name="Image" class="form-control" accept="image/*" onchange="previewImage(event)" style="display: none;" />
+        <button style="height:45px;"type="button" class="btn btn-outline-secondary" onclick="document.getElementById('Image').click();">
+            <i class="fas fa-upload"></i> Upload Image
+        </button>
+        <span id="imagePreview" class="ms-2"></span>
+    </div>
+</div>
