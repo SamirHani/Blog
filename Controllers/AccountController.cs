@@ -82,7 +82,7 @@ namespace Blog.Controllers
 
 			await signInManager.SignInAsync(user, model.RememberMe);
 
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction("Index", "Feed");
 		}
 		public new async Task<IActionResult> SignOut()
 		{

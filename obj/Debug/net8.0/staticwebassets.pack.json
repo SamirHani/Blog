@@ -13,8 +13,16 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "D:\\1-Depi\\4-MVC\\Blog\\wwwroot\\img\\238f741f-701f-4a7e-a7cd-cf16d4069f7a.jpeg",
+      "PackagePath": "staticwebassets\\img\\238f741f-701f-4a7e-a7cd-cf16d4069f7a.jpeg"
+    },
+    {
       "Id": "D:\\1-Depi\\4-MVC\\Blog\\wwwroot\\img\\av1.jpg",
       "PackagePath": "staticwebassets\\img\\av1.jpg"
+    },
+    {
+      "Id": "D:\\1-Depi\\4-MVC\\Blog\\wwwroot\\img\\c7d0da18-ed5f-4126-ad7a-89cd9dc653a0.png",
+      "PackagePath": "staticwebassets\\img\\c7d0da18-ed5f-4126-ad7a-89cd9dc653a0.png"
     },
     {
       "Id": "D:\\1-Depi\\4-MVC\\Blog\\wwwroot\\js\\site.js",

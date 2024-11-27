@@ -1,56 +1,92 @@
 ﻿using Blog.Context;
+using Blog.Models;
+using Blog.Services;
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 
 namespace Blog.Controllers
 {
-    [Authorize]
-    public class FeedController : Controller
-    {
-        private readonly ApplicationDbContext context;
+	[Authorize]
+	public class FeedController : Controller
+	{
 
-        public FeedController(ApplicationDbContext context)
-        {
-            this.context = context;
-        }
-        public IActionResult Index()
-        {
-            // we get the posts
-            var Posts = context.Posts.ToList();
+		private readonly ApplicationDbContext context;
+		private readonly AccountService service;
 
-            // Created the feed list 
-            List<FeedPostsViewModel> feedPosts = new List<FeedPostsViewModel>();
+		public FeedController(ApplicationDbContext context, AccountService service)
+		{
+			this.context = context;
+			this.service = service;
+		}
 
-            // add the posts to the feed
-            foreach (var post in Posts)
-            {
-                var feed = new FeedPostsViewModel();
-                var profile = context.Profiles.FirstOrDefault(p => p.ApplicationUserId == post.UserId);
+		public async Task<IActionResult> Index(string? id)// id here is the username
+		{
+			var Posts = new List<Post>();
+			if (id != null)
+			{
+				var user = await service.GetByUserNameAsync(id);
+				// we get the posts
+				Posts = context.Posts.Where(p => p.UserId == user.Id).OrderByDescending(p => p.CreatedAt).Include(p => p.Comments).Include(p => p.Likes).ToList();
+			}
+			else
+			{
+				Posts = context.Posts.OrderByDescending(p => p.CreatedAt).Include(p => p.Comments).Include(p => p.Likes).ToList();
+			}
 
-                if (profile != null)
-                {
-                    feed.Image = profile.ImgUrl;
-                    feed.UserName = profile.Name;
-                }
+			// Created the feed list 
+			List<FeedPostsViewModel> feedPosts = new List<FeedPostsViewModel>();
 
-                feed.Content = post.Content;
+			// add the posts to the feed
+			foreach (var post in Posts)
+			{
+				var feedView = new FeedPostsViewModel();
+				var profile = context.Profiles.FirstOrDefault(p => p.ApplicationUserId == post.UserId);
 
-                if (post.Title != null)
-                    feed.Title = post.Title;
+				if (profile != null)
+				{
+					feedView.Image = profile.ImgUrl;
+					feedView.UserName = profile.Name;
+				}
 
-                feed.CreatedAt = post.CreatedAt;
+				feedView.Content = post.Content;
 
-                // this is for the post image
-                if (post.Image != null)
-                    feed.PostImage = post.Image;
+				if (post.Title != null)
+					feedView.Title = post.Title;
 
-                feed.Language = post.Language;
-                feed.UserId = post.UserId;
-                feed.Id = post.Id;
-                feedPosts.Add(feed);
-            }
-            return View(feedPosts);
-        }
-    }
+				feedView.CreatedAt = post.CreatedAt;
+
+				// add the number of the comments and likes
+				feedView.CommentsNumber = post.Comments?.Count() ?? 0;
+				feedView.LikesNumber = post.Likes?.Count() ?? 0;
+
+				// this is for the post image
+				if (post.Image != null)
+					feedView.PostImage = post.Image;
+
+				feedView.Language = post.Language;
+				feedView.UserId = post.UserId;
+				feedView.Id = post.Id;
+				feedPosts.Add(feedView);
+			}
+			return View("_index", feedPosts);
+		}
+
+		public IActionResult Search(string text)
+		{
+			if(string.IsNullOrEmpty(text))
+			{
+				return View("_search", new List<Post>());
+			}
+				var searchResults = context.Posts.
+					Where(p => p.Content.ToLower().Contains(text.ToLower()) || p.Title.ToLower().Contains(text.ToLower())).ToList();
+				if (searchResults != null)
+					return View("_search", searchResults);
+				return View("_search", searchResults);
+		}
+
+	}
 }

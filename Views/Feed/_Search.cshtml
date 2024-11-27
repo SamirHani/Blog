@@ -1,0 +1,21 @@
+﻿@model List<Post>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Post Details</th> <!-- Single column for Title and Content -->
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var post in Model)
+        {
+                <tr>
+                    <td>
+                        <strong>@post.Title</strong><br />
+                        <span>@post.Content</span>
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>

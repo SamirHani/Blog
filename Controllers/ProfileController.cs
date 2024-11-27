@@ -11,9 +11,9 @@ namespace Blog.Controllers
 			this.context = context;
 		}
 
-		public IActionResult User(int id)
+		public new IActionResult User(string id)
 		{
-			var res = context.Profiles.FirstOrDefault(p => p.Id == id);
+			var res = context.Profiles.FirstOrDefault(p =>p.Name == id);
 
 			if (res == null)
 			{

@@ -65,7 +65,7 @@ namespace Blog
 
 			app.MapControllerRoute(
 				name: "default",
-				pattern: "{controller=Home}/{action=Index}/{id?}");
+				pattern: "{controller=Feed}/{action=Index}/{id?}");
 
 			app.Run();
 		}

@@ -38,8 +38,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxTaG93QWxsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/1-Depi/4-MVC/Blog/Views/Feed/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVlZFxJbmRleC5jc2h0bWw=
+[D:/1-Depi/4-MVC/Blog/Views/Feed/_Search.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVlZFxfU2VhcmNoLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/1-Depi/4-MVC/Blog/Views/Home/Index.cshtml]
@@ -58,6 +58,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9zdFxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/1-Depi/4-MVC/Blog/Views/Post/EditComment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9zdFxFZGl0Q29tbWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/1-Depi/4-MVC/Blog/Views/Post/ShowAllComments.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9zdFxTaG93QWxsQ29tbWVudHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -66,12 +70,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9zdFxTaG93UG9zdENvbW1lbnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/1-Depi/4-MVC/Blog/Views/Post/Update.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9zdFxVcGRhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/1-Depi/4-MVC/Blog/Views/Profile/User.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxVc2VyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/1-Depi/4-MVC/Blog/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/1-Depi/4-MVC/Blog/Views/Shared/_Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/1-Depi/4-MVC/Blog/Views/Shared/_ScriptPreviewImage.cshtml]

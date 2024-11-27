@@ -21,7 +21,7 @@ namespace Blog.Services
 
         public string GetUserIdFromClaim(ClaimsPrincipal User)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return userId;
         }
         public Post BindPostData(CreatePostViewModel model, string userId)

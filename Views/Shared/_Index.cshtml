@@ -1,0 +1,212 @@
+﻿@using System.Security.Claims
+@model IEnumerable<Blog.ViewModels.FeedPostsViewModel>
+
+@{
+	ViewData["Title"] = "Index";
+	var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+	var blackTheme = "White";
+}
+
+<div class="container-sm" style="max-width:600px">
+	<div class="row justify-content-center">
+		@foreach (var item in Model)
+		{
+			var textDirection = item.Language == "ar" ? "rtl" : "ltr";
+					<div class="col-12 mb-4"> <!-- Use col-12 to take full width on all screens -->
+							<div class="card" style="padding: 20px;background:@blackTheme;"> <!-- Added padding -->
+							<div class="card-body d-flex justify-content-start gap-1">
+								<div class="d-flex justify-content-start">
+									<img src="@item.Image" alt="User Image" class="rounded-circle d-block" style="width: 40px; height: 40px;" />
+								</div>
+								   <div>
+								<div class="d-flex align-items-start mb-3">
+										<a asp-action="User"
+										asp-controller="Profile"
+										asp-route-id="@item.UserName">
+										<h4 style="font-size:20px;margin:5px;">@Html.DisplayFor(modelItem => item.UserName)</h4></a>
+										<button id="followButton" data-user-id="@item.UserId" class="btn btn-primary">Follow</button>
+								</div>
+								<h5 class="card-title" style="direction: @textDirection">@Html.DisplayFor(modelItem => item.Title)</h5>
+									<p class="card-text" style="direction: @textDirection;">@Html.DisplayFor(modelItem => item.Content)</p>
+
+								<!-- Display the post image if available -->
+							@if (!string.IsNullOrEmpty(item.PostImage))
+							{
+											<img src="@item.PostImage" alt="Post Image" class="img-fluid mb-2" style="max-width: 100%; height: auto;" />
+							}
+
+								<p class="card-text">
+									<small class="text-muted">Posted at: @item.CreatedAt.ToString("dd/MM/yy HH:mm")</small>
+								</p>
+								<div>
+											<a
+												class="btn btn-light btn-sm LikeBtn" 
+												data-id="@item.Id" 
+												data-userid="@userId">
+												<i class="fas fa-thumbs-up"></i> @item.LikesNumber Likes
+											</a>
+
+									<a asp-action= "AddComment" asp-controller="Post" asp-route-id="@item.Id" class="add-comment btn btn-light btn-sm"><i class="fas fa-comment"></i>Add Comment</a>
+										
+									<a asp-action= "ShowPostComments" asp-controller="Post" asp-route-id="@item.Id" class="add-comment btn btn-light btn-sm"><i class="fas fa-comment"></i> @item.CommentsNumber Comments </a>
+
+										<button class="btn btn-light btn-sm" id="@item.Id" onclick="share(@item.Id)"><i class="fas fa-share"></i> Share </button>
+								</div>
+								</div>
+						@if (userId == item.UserId)
+						{
+									<a class="text-danger" style="position: absolute;right: 30px;top: 40px;" asp-action="Delete" asp-controller="Post" asp-route-id="@item.Id">
+											  <i class="fas fa-times text-danger" style="font-size: 1.5em;"></i>
+									</a>
+									<a class="text-primary" style="position: absolute;right: 60px;top: 40px;" asp-action="Update" asp-controller="Post" asp-route-id="@item.Id">
+											  <i class="fa-solid fa-pen-to-square" style="font-size: 1.5em;"></i>
+									</a>
+						}
+							</div>
+						</div>
+					</div>
+		}
+	</div>
+</div>
+
+<!-- Include Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+
+<!-- Modal Structure to show comments-->
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+	<div class="modal-content"style="background:@blackTheme">
+	  <div class="modal-header">
+		<h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	  </div>
+	  <div class="modal-body" id="modal-body-content">
+		<!-- AJAX-loaded content will go here -->
+	  </div>
+	</div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+	// ajax request to add a comment
+	$(document).on('click', '.add-comment', function (e) {
+		e.preventDefault();
+
+		var url = $(this).attr('href'); // Get the URL from the href attribute
+		console.log(url)
+		$.ajax({
+			url: url,
+			type: 'GET',
+			success: function (data) {
+				$('#modal-body-content').html(data); // Load the partial view into the modal body
+				$('#commentModal').modal('show'); // Show the modal
+			},
+			error: function () {
+				alert('Error loading comment form.');
+			}
+		});
+	});
+
+	// Add or remove like
+$(document).on('click', '.LikeBtn', function (e) {
+	e.preventDefault(); // Prevent the default link behavior
+
+	// Get the post ID and user ID from the button's data attributes
+	var postId = $(this).data('id');
+	var userId = $(this).data('userid');
+	var $this = $(this); // Cache the current element
+
+	// Perform the AJAX POST request to add/remove like
+	$.ajax({
+		url: '/Post/AddLike', // The path to your action
+		type: 'POST', // Use POST
+		data: { id: postId, userId: userId }, // Data to send
+		success: function (response) {
+			if (response.success) {
+				$this.html(`<i class="fas fa-thumbs-up"></i> ${response.likes} Likes`);
+				$this.css('color', response.color);
+				console.log('Like added/removed successfully!');
+			} else {
+				console.log(response)
+				alert(response.message || 'An error occurred while updating likes.the frist alet ');
+			}
+		},
+		error: function (xhr, status, error) {
+			console.error('Error adding/removing like:', error);
+			alert('An error occurred. Please try again. seconlskdhalset don try');
+		}
+	});
+});
+
+
+
+
+</script>
+
+
+<script>
+// ajax for follow button
+	// Listen for the click event on the follow button
+	document.getElementById("followButton").addEventListener("click", function() {
+		const userId = this.dataset.userId;  // Get the user ID from the data attribute
+
+		// Perform the AJAX request to the Subscription action
+		fetch(`/Subscription/index/${userId}`, {
+			method: "POST", // Sending a POST request
+			headers: {
+				"Content-Type": "application/json"  // Content type for JSON request
+			},
+			// No body needed, as the user ID is in the URL
+		})
+		.then(response => response.text())  // Expecting a plain text response
+		.then(data => {
+			if (data === "followed") {
+				// Show a small popup (toast message)
+				showFollowedPopup();
+
+				// Remove the Follow button for this user
+				this.style.display = "none";  // Hides the button
+			}
+		})
+		.catch(error => console.error("Error:", error));
+	});
+
+	// Function to display the "Followed" popup
+	function showFollowedPopup() {
+		// Create a popup element (could be a simple div or toast message)
+		const popup = document.createElement("div");
+		popup.textContent = "Followed!";
+		popup.style.position = "fixed";
+		popup.style.bottom = "20px";
+		popup.style.right = "20px";
+		popup.style.backgroundColor = "#28a745";
+		popup.style.color = "white";
+		popup.style.padding = "10px";
+		popup.style.borderRadius = "5px";
+		popup.style.zIndex = "1000";
+
+		// Append the popup to the body
+		document.body.appendChild(popup);
+
+		// Automatically hide the popup after 2 seconds
+		setTimeout(() => {
+			popup.style.display = "none";
+		}, 2000);
+	}
+</script>
+
+<script>
+// script to share the posts link
+function share(postId) {
+const textToCopy = `https://localhost:7137/post/post/${postId}`;
+
+	navigator.clipboard.writeText(textToCopy)
+		.catch(err => {
+			console.error("Failed to copy text: ", err);
+		});
+}
+</script>
+

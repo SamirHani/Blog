@@ -1,0 +1,47 @@
+﻿@model Blog.ViewModels.EditCommentVM
+
+@{
+    ViewData["Title"] = "EditComment";
+}
+
+<h1>Edit Comment</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditComment">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+                <input asp-for="CommentId" hidden />
+                <input asp-for="PostId" hidden />
+
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <input asp-for="Content" class="form-control" />
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            @if (@Model.Image != null)
+            {
+                    <img src="@Model.Image" alt="comment Image" style="width:100px;height:100px" />
+            }
+
+            <div style="display:flex;gap:20px;">
+
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+
+                <div>
+                    <a asp-action="Index" asp-controller="Feed" class="btn btn-danger" >Discard</a>
+                </div>
+
+             </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

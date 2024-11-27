@@ -5,8 +5,8 @@
 }
 
 <!-- Container for the Profile Card -->
-<div class="container mt-5">
-	<div class="card profile-card">
+<div class="container mt-5" style="max-width: 600px;">
+	<div class="card profile-card" style="border-radius: 0 0 0 0;">
 		<div class="card-body text-center">
 			<img src="@Model.ImgUrl" alt="Profile Image" class="profile-img mb-3" />
 			<h4 class="card-title">@Model.Name</h4>
@@ -38,3 +38,20 @@
 		object-fit: cover; /* Maintain aspect ratio */
 	}
 </style>
+	<div id="posts"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	$(document).ready(function () {
+		const url = `/Feed/index/@Model.Name`;
+		$.ajax({
+			url: url,
+			method: 'GET',
+			success: function (response) {
+				$('#posts').append(response);
+			},
+			error: function (xhr, status, error) {
+				console.error('Error fetching content:', error);
+			}
+		});
+	});
+</script>

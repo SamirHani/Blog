@@ -13,5 +13,7 @@ namespace Blog.ViewModels
         public string UserName { get; set; }
         public string PostImage { get; set; }
         public string? Language { get; set; }
+        public int? CommentsNumber { get; set; }
+        public int? LikesNumber { get; set; }
     }
 }
