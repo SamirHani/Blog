@@ -15,7 +15,13 @@
                         <strong>@post.Title</strong><br />
                         <span>@post.Content</span>
                     </td>
+                    <td>
+                        <a asp-action="Post" asp-controller="Post" asp-route-id="@post.Id" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> Go to Details
+                        </a>
+                    </td>
                 </tr>
+
         }
     </tbody>
 </table>

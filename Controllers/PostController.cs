@@ -10,72 +10,72 @@ using System.Security.Claims;
 
 namespace Blog.Controllers
 {
-	[Authorize]
-	public class PostController : Controller
-	{
-		private readonly ApplicationDbContext context;
-		private readonly PostService postService;
-		public PostController(ApplicationDbContext context, PostService postService)
-		{
-			this.context = context;
-			this.postService = postService;
-		}
-		
-		//Post CRUD Operations
-		public IActionResult Create()
-		{
-			return View();
-		}
-		[HttpPost]
-		public async Task<IActionResult> Create(CreatePostViewModel model)
-		{
-			var userId = postService.GetUserIdFromClaim(User); // return string
+    [Authorize]
+    public class PostController : Controller
+    {
+        private readonly ApplicationDbContext context;
+        private readonly PostService postService;
+        public PostController(ApplicationDbContext context, PostService postService)
+        {
+            this.context = context;
+            this.postService = postService;
+        }
 
-			if (ModelState.IsValid)
-			{
-				var post = postService.BindPostData(model, userId); // return Post
+        //Post CRUD Operations
+        public IActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Create(CreatePostViewModel model)
+        {
+            var userId = postService.GetUserIdFromClaim(User); // return string
+
+            if (ModelState.IsValid)
+            {
+                var post = postService.BindPostData(model, userId); // return Post
 
 
-				var fileName = await postService.RenameAndSaveImageAsync(model.Image);
-				// bind the image to the post to save it in the database
-				if (fileName != null)
-					post.Image = "/img/" + fileName;
+                var fileName = await postService.RenameAndSaveImageAsync(model.Image);
+                // bind the image to the post to save it in the database
+                if (fileName != null)
+                    post.Image = "/img/" + fileName;
 
-				context.Posts.Add(post);
-				await context.SaveChangesAsync();
-				return RedirectToAction("Index", "Feed");
-			}
-			ModelState.AddModelError("", "Invalid Post");
-			return View(model);
-		}
-		public IActionResult Delete(int id)
-		{
-			var post = context.Posts.Include(p => p.Comments)
-									.Include(p => p.Likes)
-									.FirstOrDefault(p => p.Id == id);
-			if (post == null)
-			{
-				return NotFound();
-			}
-			if (post.UserId != User.FindFirst(ClaimTypes.NameIdentifier)?.Value)
-			{
-				return Unauthorized();
-			}
-			context.Comments.RemoveRange(post.Comments);
-			context.Likes.RemoveRange(post.Likes);
-			context.Posts.Remove(post);
-			context.SaveChanges();
-			return RedirectToAction("Index", "Feed");
-		}
-		public IActionResult Update(int Id)
-		{
-			if (Id == 0 || Id == null)
-				return RedirectToAction("index", "Feed");
+                context.Posts.Add(post);
+                await context.SaveChangesAsync();
+                return RedirectToAction("Index", "Feed");
+            }
+            ModelState.AddModelError("", "Invalid Post");
+            return View(model);
+        }
+        public IActionResult Delete(int id)
+        {
+            var post = context.Posts.Include(p => p.Comments)
+                                    .Include(p => p.Likes)
+                                    .FirstOrDefault(p => p.Id == id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+            if (post.UserId != User.FindFirst(ClaimTypes.NameIdentifier)?.Value && !User.IsInRole("Admin"))
+            {
+                return Unauthorized();
+            }
+            context.Comments.RemoveRange(post.Comments);
+            context.Likes.RemoveRange(post.Likes);
+            context.Posts.Remove(post);
+            context.SaveChanges();
+            return RedirectToAction("Index", "Feed");
+        }
+        public IActionResult Update(int Id)
+        {
+            if (Id == 0 || Id == null)
+                return RedirectToAction("index", "Feed");
 
             // get the old post from the database
             var oldPost = context.Posts.Where(p => p.Id == Id).FirstOrDefault();
-			if (oldPost == null)
-				return Unauthorized();
+            if (oldPost == null)
+                return Unauthorized();
             var userId = postService.GetUserIdFromClaim(User); // return string
 
             // check if this the Creator of the Post
@@ -84,51 +84,51 @@ namespace Blog.Controllers
 
             // edit post view model to be able to edit on it
             EditPostViewModel oldPostModel = new EditPostViewModel();
-			oldPostModel.Title = oldPost.Title;
-			oldPostModel.Content = oldPost.Content;
-			oldPostModel.Language = oldPost.Language;
-			oldPostModel.PostId = Id;
+            oldPostModel.Title = oldPost.Title;
+            oldPostModel.Content = oldPost.Content;
+            oldPostModel.Language = oldPost.Language;
+            oldPostModel.PostId = Id;
 
-			if(oldPost.Image != null)
-			oldPostModel.Image = oldPost.Image;
+            if (oldPost.Image != null)
+                oldPostModel.Image = oldPost.Image;
 
             return View(oldPostModel);
-		}
-		[HttpPost]
-		public IActionResult Update(EditPostViewModel newVersionPost)
-		{
+        }
+        [HttpPost]
+        public IActionResult Update(EditPostViewModel newVersionPost)
+        {
             if (!ModelState.IsValid)
-			{
-				ModelState.AddModelError("", "Something Went Wrong");
-				return View(newVersionPost);
-			}
-			var oldPost = context.Posts.Where(p=>p.Id == newVersionPost.PostId).FirstOrDefault();
+            {
+                ModelState.AddModelError("", "Something Went Wrong");
+                return View(newVersionPost);
+            }
+            var oldPost = context.Posts.Where(p => p.Id == newVersionPost.PostId).FirstOrDefault();
 
             if (oldPost == null)
                 return Unauthorized();
 
             var userOfThePost = oldPost.UserId;
 
-			if (postService.GetUserIdFromClaim(User) != userOfThePost)
-				return Unauthorized();
+            if (postService.GetUserIdFromClaim(User) != userOfThePost)
+                return Unauthorized();
 
-			oldPost.Title = newVersionPost.Title;
-			oldPost.Content = newVersionPost.Content;
-			oldPost.Language = newVersionPost.Language;
+            oldPost.Title = newVersionPost.Title;
+            oldPost.Content = newVersionPost.Content;
+            oldPost.Language = newVersionPost.Language;
 
-			context.Posts.Update(oldPost);
-			context.SaveChanges();
+            context.Posts.Update(oldPost);
+            context.SaveChanges();
 
-			return RedirectToAction("index", "Feed");
-		}
+            return RedirectToAction("index", "Feed");
+        }
 
-		//Comment CRUD Operations
-		public IActionResult AddComment(int id)
-		{
-			// send the post id to use it in the http request
-			ViewBag.PostId = id;
-			return PartialView();
-		}
+        //Comment CRUD Operations
+        public IActionResult AddComment(int id)
+        {
+            // send the post id to use it in the http request
+            ViewBag.PostId = id;
+            return PartialView();
+        }
         [HttpPost]
         public async Task<IActionResult> AddComment(AddCommentViewModel model)
         {
@@ -150,41 +150,41 @@ namespace Blog.Controllers
             return View(model);
         }
         public IActionResult ShowPostComments(int id)
-		{
-			var comments = context.Comments.Where(c => c.PostId == id).ToList();
-			if (comments.Count == 0)
-			{
-				return Content("<h3>there's no comment's here</h3>");
-			}
-			List<PostCommentsViewModel> postComments = new List<PostCommentsViewModel>();
-			ViewBag.Post = context.Posts.FirstOrDefault(p => p.Id == comments[0].PostId);
-			foreach (var item in comments)
-			{
-				var comment = new PostCommentsViewModel();
-				var profile = context.Profiles.FirstOrDefault(p => p.ApplicationUserId == item.UserId);
+        {
+            var comments = context.Comments.Where(c => c.PostId == id).ToList();
+            if (comments.Count == 0)
+            {
+                return Content("<h3>there's no comment's here</h3>");
+            }
+            List<PostCommentsViewModel> postComments = new List<PostCommentsViewModel>();
+            ViewBag.Post = context.Posts.FirstOrDefault(p => p.Id == comments[0].PostId);
+            foreach (var item in comments)
+            {
+                var comment = new PostCommentsViewModel();
+                var profile = context.Profiles.FirstOrDefault(p => p.ApplicationUserId == item.UserId);
 
-				if (profile != null)
-				{
-					comment.ProfileImage = profile.ImgUrl;
-					comment.UserName = profile.Name;
-				}
-				// feed => comment , Post => item
-				comment.Content = item.Content;
+                if (profile != null)
+                {
+                    comment.ProfileImage = profile.ImgUrl;
+                    comment.UserName = profile.Name;
+                }
+                // feed => comment , Post => item
+                comment.Content = item.Content;
 
-				comment.CreatedAt = item.CreatedAt;
+                comment.CreatedAt = item.CreatedAt;
 
-				// this is for the post image
-				if (item.Image != null)
-					comment.CommentImage = item.Image;
+                // this is for the post image
+                if (item.Image != null)
+                    comment.CommentImage = item.Image;
 
-				comment.UserId = item.UserId;
-				comment.Id = item.Id;
-				postComments.Add(comment);
-			}
-			return PartialView(postComments);
-		}
-		public IActionResult EditComment(int Id)
-		{
+                comment.UserId = item.UserId;
+                comment.Id = item.Id;
+                postComments.Add(comment);
+            }
+            return PartialView(postComments);
+        }
+        public IActionResult EditComment(int Id)
+        {
             if (Id == 0 || Id == null)
                 return RedirectToAction("index", "Feed");
             // get the old post from the database
@@ -203,14 +203,14 @@ namespace Blog.Controllers
             EditCommentVM oldPostModel = new EditCommentVM();
             oldPostModel.Content = oldComment.Content;
             oldPostModel.CommentId = Id;
-			if (oldComment.Image != null)
-				oldPostModel.Image = oldComment.Image;
+            if (oldComment.Image != null)
+                oldPostModel.Image = oldComment.Image;
 
             return View(oldPostModel);
         }
-		[HttpPost]
-		public IActionResult Editcomment(EditCommentVM newVersionComment)
-		{
+        [HttpPost]
+        public IActionResult EditComment(EditCommentVM newVersionComment)
+        {
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Something Went Wrong");
@@ -234,14 +234,14 @@ namespace Blog.Controllers
 
             return RedirectToAction("index", "Feed");
         }
-		// you didn't add button for deleing the comment yet and the delete also
+        // you didn't add button for deleing the comment yet and the delete also
         public IActionResult DeleteComment(int id) // comment id
         {
             var comment = context.Comments.FirstOrDefault(c => c.Id == id);
             if (comment == null)
                 return NotFound();
 
-            if (comment.UserId != postService.GetUserIdFromClaim(User))
+            if (comment.UserId != postService.GetUserIdFromClaim(User) && !User.IsInRole("Admin"))
                 return Unauthorized();
 
             context.Comments.Remove(comment);
@@ -250,78 +250,100 @@ namespace Blog.Controllers
             return RedirectToAction("Index", "Feed");
         }
         public IActionResult ShowAllComments()
-		{
-			var comments = context.Comments.ToList();
-			return View(comments);
-		}
+        {
+            var comments = context.Comments.ToList();
+            return View(comments);
+        }
 
         //Like CRUD Operations
         [HttpPost]
-		public async Task<IActionResult> AddLike(int Id, string userId)
-		{
-			var color = "black";
-			var Liked = context.Likes.FirstOrDefault(L => L.PostId == Id && L.UserId == userId);
-			if (Liked == null)
-			{
-				context.Add(new Like { PostId = Id, UserId = userId });
-				color = "blue";
-			}
-			else
-			{
-				context.Likes.Remove(Liked);
-			}
-			await context.SaveChangesAsync();
-			var res = UpdateLikesCount(Id);
-			return Json(new { success = true, likes = res, color = color });
-		}
-		public int UpdateLikesCount(int Id)
-		{
-			var Post = context.Posts.Include(p => p.Likes).FirstOrDefault(p => p.Id == Id);
-			var num = Post.Likes?.Count() ?? 0;
-			return num;
-		}
+        public async Task<IActionResult> AddLike(int Id, string userId)
+        {
+            var color = "black";
+            var Liked = context.Likes.FirstOrDefault(L => L.PostId == Id && L.UserId == userId);
+            if (Liked == null)
+            {
+                context.Add(new Like { PostId = Id, UserId = userId });
+                color = "blue";
+            }
+            else
+            {
+                context.Likes.Remove(Liked);
+            }
+            await context.SaveChangesAsync();
+            var res = UpdateLikesCount(Id);
+            return Json(new { success = true, likes = res, color = color });
+        }
+        public int UpdateLikesCount(int Id)
+        {
+            var Post = context.Posts.Include(p => p.Likes).FirstOrDefault(p => p.Id == Id);
+            var num = Post.Likes?.Count() ?? 0;
+            return num;
+        }
+        
+        // link for Sharing posts and Show it
+        public IActionResult Post(int id) // id is for post id
+        {
+            var post = context.Posts.Where(p => p.Id == id).Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault();
+            if (post == null)
+                return NotFound();
 
-		// link for Sharing posts and Show it
-		public IActionResult Post(int id) // id is for post id
-		{
-			var post = context.Posts.Where(p => p.Id == id).Include(p => p.Comments).Include(p => p.Likes).FirstOrDefault();
-			if (post == null)
-				return NotFound();
+            var postViewModel = new List<FeedPostsViewModel> { MapPostToViewModel(post) };
 
-			var postViewModel = new List<FeedPostsViewModel> { MapPostToViewModel(post) };
+            return View("_index", postViewModel);
+        }
+        public IActionResult ShowLikers(int Id)
+        {
+            var post = context.Posts.Where(p => p.Id == Id).Include(p => p.Likes).FirstOrDefault();
 
-			return View("_index", postViewModel);
-		}
-		public FeedPostsViewModel MapPostToViewModel(Post post)
-		{
-			var feedView = new FeedPostsViewModel();
-			var profile = context.Profiles.FirstOrDefault(p => p.ApplicationUserId == post.UserId);
+            if (post == null)
+                return NotFound();
 
-			if (profile != null)
-			{
-				feedView.Image = profile.ImgUrl;
-				feedView.UserName = profile.Name;
-			}
+            var likers = post.Likes;
+            List<Profile> profiles = new List<Profile>();
+            if (likers != null)
+            {
+                foreach (var item in likers)
+                {
+                    var userId = item.UserId;
+                    var profile = context.Profiles.Where(p => p.ApplicationUserId == userId).FirstOrDefault();
+                    if (profile != null)
+                        profiles.Add(profile);
 
-			feedView.Content = post.Content;
+                }
+            }
+            return View("ShowProfiles",profiles);
+        }
+        public FeedPostsViewModel MapPostToViewModel(Post post)
+        {
+            var feedView = new FeedPostsViewModel();
+            var profile = context.Profiles.FirstOrDefault(p => p.ApplicationUserId == post.UserId);
 
-			if (post.Title != null)
-				feedView.Title = post.Title;
+            if (profile != null)
+            {
+                feedView.Image = profile.ImgUrl;
+                feedView.UserName = profile.Name;
+            }
 
-			feedView.CreatedAt = post.CreatedAt;
+            feedView.Content = post.Content;
 
-			// add the number of the comments and likes
-			feedView.CommentsNumber = post.Comments?.Count() ?? 0;
-			feedView.LikesNumber = post.Likes?.Count() ?? 0;
+            if (post.Title != null)
+                feedView.Title = post.Title;
 
-			// this is for the post image
-			if (post.Image != null)
-				feedView.PostImage = post.Image;
+            feedView.CreatedAt = post.CreatedAt;
 
-			feedView.Language = post.Language;
-			feedView.UserId = post.UserId;
-			feedView.Id = post.Id;
-			return feedView;
-		}
-	}
+            // add the number of the comments and likes
+            feedView.CommentsNumber = post.Comments?.Count() ?? 0;
+            feedView.LikesNumber = post.Likes?.Count() ?? 0;
+
+            // this is for the post image
+            if (post.Image != null)
+                feedView.PostImage = post.Image;
+
+            feedView.Language = post.Language;
+            feedView.UserId = post.UserId;
+            feedView.Id = post.Id;
+            return feedView;
+        }
+    }
 }

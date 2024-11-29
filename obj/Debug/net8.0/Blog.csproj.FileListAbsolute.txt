@@ -245,6 +245,7 @@ D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\Blog.csproj.CoreCompileInputs.cache
 D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\Blog.MvcApplicationPartsAssemblyInfo.cache
 D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\Blog.RazorAssemblyInfo.cache
 D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\Blog.RazorAssemblyInfo.cs
+D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\Blog.sourcelink.json
 D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\staticwebassets.build.json
 D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\staticwebassets.development.json
 D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\staticwebassets\msbuild.Blog.Microsoft.AspNetCore.StaticWebAssets.props
@@ -261,4 +262,3 @@ D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\refint\Blog.dll
 D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\Blog.pdb
 D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\Blog.genruntimeconfig.cache
 D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\ref\Blog.dll
-D:\1-Depi\4-MVC\Blog\obj\Debug\net8.0\Blog.sourcelink.json

@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Links Page";
+}
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">Dashboard</h1>
+
+    <div class="row">
+        <!-- Card 1 -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">Show All Users</h5>
+                    <a class="btn btn-primary mt-3"
+                       asp-action="ShowAll"
+                       asp-controller="Account">
+                        View All
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-plus-fill display-4 text-success mb-3"></i>
+                    <h5 class="card-title">Add Role</h5>
+                    <a class="btn btn-success mt-3"
+                       asp-action="AddRole"
+                       asp-controller="Account">
+                        Add
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-trash-fill display-4 text-danger mb-3"></i>
+                    <h5 class="card-title">Delete User</h5>
+                    <a class="btn btn-danger mt-3"
+                       asp-action="DeleteUser"
+                       asp-controller="Account">
+                        Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add more cards as needed -->
+    </div>
+</div>

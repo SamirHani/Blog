@@ -6,6 +6,7 @@ using Blog.Services;
 using Microsoft.AspNetCore.Identity;
 using Humanizer;
 using Blog.Context;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers
 {
@@ -16,13 +17,15 @@ namespace Blog.Controllers
 		private readonly UserManager<ApplicationUser> user;
 		private readonly ProfileService profileService;
 		private readonly SignInManager<ApplicationUser> signInManager;
+		private readonly RoleManager<IdentityRole> roleManager;
 
 		public AccountController(
 			AccountService service,
 			ApplicationDbContext _context,
 			UserManager<ApplicationUser> user,
 			ProfileService profileService,
-			SignInManager<ApplicationUser> signInManager
+			SignInManager<ApplicationUser> signInManager,
+			RoleManager<IdentityRole> roleManager
 			)
 		{
 			this.service = service;
@@ -30,6 +33,7 @@ namespace Blog.Controllers
 			this.user = user;
 			this.profileService = profileService;
 			this.signInManager = signInManager;
+			this.roleManager = roleManager;
 		}
 		public IActionResult Register()
 		{
@@ -100,6 +104,7 @@ namespace Blog.Controllers
 
 			return true;
 		}
+		[Authorize(Roles="Admin")]
 		public IActionResult ShowAll()
 		{
 			List<ShowAllAccountsVM> showAllAccountsVMs = new List<ShowAllAccountsVM>();
@@ -116,10 +121,57 @@ namespace Blog.Controllers
 				showAllAccountsVMs.Add(showAllAccountsVM);
 
 			}
-			var Profiles = context.Profiles.OrderBy(p=>p.Name).ToList();
+			var Profiles = context.Profiles.OrderBy(p => p.Name).ToList();
 			var orderedAccounts = showAllAccountsVMs.OrderBy(p => p.UserName).ToList();
 			ViewBag.Profiles = Profiles;
 			return View(orderedAccounts);
+		}
+		[Authorize(Roles = "Admin")]
+		public IActionResult AddRole()
+		{
+			return View();
+		}
+		[HttpPost]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> AddRole(AddRoleVM addRoleVM)
+		{
+			if (ModelState.IsValid)
+			{
+				IdentityRole role = new IdentityRole()
+				{
+					Name = addRoleVM.Role
+				};
+
+				var result = await roleManager.CreateAsync(role);
+				if (result.Succeeded)
+				{
+					ViewBag.AddRole = true;
+					return RedirectToAction("Index", "Feed");
+				}
+			}
+			ViewBag.AddRole = false;
+			return View(addRoleVM);
+		}
+		[Authorize(Roles = "Admin")]
+		public IActionResult Dashboard()
+		{
+			return View("AdminActions");
+		}
+		[Authorize(Roles ="Admin")]
+		public IActionResult DeleteUser()
+		{
+			return View();
+		}
+        [Authorize(Roles ="Admin")]
+		[HttpPost]
+		public async Task<IActionResult> DeleteUser(string userName)
+		{
+			var userToDelete = await user.FindByNameAsync(userName);
+
+				if(userToDelete != null)
+					await user.DeleteAsync(userToDelete);
+
+			return RedirectToAction("Index" , "Feed");
 		}
 	}
 }

@@ -65,17 +65,27 @@ ul {
 							<button class="btn btn-outline-success" type="submit">Search</button>
 						</form>
 						<li class="nav-item" style="display:flex;align-items:center;">
+								<a asp-action="User" asp-controller="Profile" asp-route-id="@User.Identity.Name" style="text-decoration:none;">
 						<i class="fas fa-user text-success"></i>
 						<span class="text-success font-weight-bold" style="font-weight: bold;">Welcome @User.Identity.Name</span>
-						</li>
+							</a>
+									</li>
+								@if (User.IsInRole("Admin"))
+								{
+									<li class="nav-item" style="display:flex;align-items:center;">
+									<i class="fa-solid fa-bars-progress"></i>
+										<a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Dashboard">Dashboard</a>
+									</li>
+								}
 								<li class="nav-item" style="display:flex;align-items:center;">
-								 <i class="fas fa-users" style="background:white;color:blue;"></i>
-								 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ShowAll">Show All</a>
-							</li>
-								 <li class="nav-item" style="display:flex;align-items:center;">
 								 <i class="fas fa-home " style="color:black;"></i>
 								 <a class="nav-link text-dark" asp-area="" asp-controller="Feed" asp-action="index">Home</a>
 								 </li>
+									 <li class="nav-item" style="display:flex;align-items:center;">
+										<i class="fas fa-users" style="color:black;"></i> <!-- Following icon -->
+										<a class="nav-link text-dark" asp-area="" asp-controller="Feed" asp-action="Following">Following</a>
+									</li>
+
 								<li class="nav-item" style="display:flex;align-items:center;"> 
 								<i class="fas fa-sign-out-alt text-danger "></i>
 								<a class="nav-link text-danger" asp-area="" asp-controller="Account" asp-action="SignOut">Sign Out</a>

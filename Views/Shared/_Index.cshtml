@@ -22,10 +22,11 @@
 								<div class="d-flex align-items-start mb-3">
 										<a asp-action="User"
 										asp-controller="Profile"
-										asp-route-id="@item.UserName">
+										asp-route-id="@item.UserName"
+										style="text-decoration:none;">
 										<h4 style="font-size:20px;margin:5px;">@Html.DisplayFor(modelItem => item.UserName)</h4></a>
-										<button id="followButton" data-user-id="@item.UserId" class="btn btn-primary">Follow</button>
-								</div>
+											<button class="followButton btn" style="font-size:15px;" data-user-id="@item.UserId">Follow</button>
+									</div>
 								<h5 class="card-title" style="direction: @textDirection">@Html.DisplayFor(modelItem => item.Title)</h5>
 									<p class="card-text" style="direction: @textDirection;">@Html.DisplayFor(modelItem => item.Content)</p>
 
@@ -39,6 +40,14 @@
 									<small class="text-muted">Posted at: @item.CreatedAt.ToString("dd/MM/yy HH:mm")</small>
 								</p>
 								<div>
+												<a 
+													asp-action="ShowLikers" 
+													asp-controller="Post" 
+													asp-route-id="@item.Id"
+													class="btn btn-light btn-sm">
+													<i class="fas fa-thumbs-up"></i> Show Likes
+												</a>
+
 											<a
 												class="btn btn-light btn-sm LikeBtn" 
 												data-id="@item.Id" 
@@ -53,11 +62,13 @@
 										<button class="btn btn-light btn-sm" id="@item.Id" onclick="share(@item.Id)"><i class="fas fa-share"></i> Share </button>
 								</div>
 								</div>
-						@if (userId == item.UserId)
+						@if (User.IsInRole("Admin") || userId == item.UserId)
 						{
+							@if (User.IsInRole("Admin") || userId == item.UserId) {
 									<a class="text-danger" style="position: absolute;right: 30px;top: 40px;" asp-action="Delete" asp-controller="Post" asp-route-id="@item.Id">
 											  <i class="fas fa-times text-danger" style="font-size: 1.5em;"></i>
 									</a>
+							}
 									<a class="text-primary" style="position: absolute;right: 60px;top: 40px;" asp-action="Update" asp-controller="Post" asp-route-id="@item.Id">
 											  <i class="fa-solid fa-pen-to-square" style="font-size: 1.5em;"></i>
 									</a>
@@ -148,9 +159,9 @@ $(document).on('click', '.LikeBtn', function (e) {
 
 
 <script>
-// ajax for follow button
-	// Listen for the click event on the follow button
-	document.getElementById("followButton").addEventListener("click", function() {
+// Listen for the click event on all follow buttons
+document.querySelectorAll(".followButton").forEach(button => {
+	button.addEventListener("click", function() {
 		const userId = this.dataset.userId;  // Get the user ID from the data attribute
 
 		// Perform the AJAX request to the Subscription action
@@ -159,7 +170,6 @@ $(document).on('click', '.LikeBtn', function (e) {
 			headers: {
 				"Content-Type": "application/json"  // Content type for JSON request
 			},
-			// No body needed, as the user ID is in the URL
 		})
 		.then(response => response.text())  // Expecting a plain text response
 		.then(data => {
@@ -173,6 +183,8 @@ $(document).on('click', '.LikeBtn', function (e) {
 		})
 		.catch(error => console.error("Error:", error));
 	});
+});
+
 
 	// Function to display the "Followed" popup
 	function showFollowedPopup() {

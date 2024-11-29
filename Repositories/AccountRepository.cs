@@ -20,6 +20,8 @@ namespace Blog.Repositories
 			IdentityResult result = await userManager.CreateAsync(user, password);
 			if (result.Succeeded)
 			{
+				//if you want to assign new admin add uncomment this
+				// await userManager.AddToRoleAsync(user , "Admin");
 				await signInManager.SignInAsync(user, RememberMe);
 			}
 			return result;

@@ -57,11 +57,13 @@
                             <h5 class="username m-0">@comment.UserName</h5>
                             <p class="comment-date m-0">@comment.CreatedAt.ToString("MMMM dd, yyyy HH:mm")</p>
                         </div>
-                    @if (userId == comment.UserId)
+                    @if (User.IsInRole("Admin") || userId == comment.UserId)
                     {
+                        @if (User.IsInRole("Admin") || userId == comment.UserId) {
                                             <a class="text-danger" style="position: absolute;right: 30px;top: 40px;" asp-action="DeleteComment" asp-controller="Post" asp-route-id="@comment.Id">
                                                       <i class="fas fa-times text-danger" style="font-size: 1.5em;"></i>
                                             </a>
+                        }
                                             <a class="text-primary" style="position: absolute;right: 60px;top: 40px;" asp-action="EditComment" asp-controller="Post" asp-route-id="@comment.Id">
                                                       <i class="fa-solid fa-pen-to-square" style="font-size: 1.5em;"></i>
                                             </a>

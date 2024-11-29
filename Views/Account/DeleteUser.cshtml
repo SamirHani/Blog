@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewData["Title"] = "DeleteUser";
+}
+<div class="container my-5">
+    <h1 class="text-center mb-4">DeleteUser</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form asp-action="DeleteUser" asp-controller="Account" method="post" class="shadow p-4 rounded bg-light">
+                <div class="mb-3">
+                    <label for="Id" class="form-label">Enter the User Name</label>
+                    <input type="text" class="form-control" id="userInput" name="userName" placeholder="Type something here..." required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+

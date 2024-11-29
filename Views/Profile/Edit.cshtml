@@ -1,0 +1,13 @@
+﻿@model Profile
+@{
+
+}
+<div style="display:flex;justify-content:center;align-items:center;flex-direction:column;">
+<img src="@Model.ImgUrl" style="width:100px;height:100px;border-radius:50%;"/>
+<h2>@Model.Name</h2>
+<form asp-action="Edit" asp-controller="Profile" method="post">
+<input type="hidden" value="@Model.Name" name="userName" />
+<input type="text" value="@Model.Bio" placeholder="Bio" name="bio" />
+<input type="submit" />
+</form>
+</div>

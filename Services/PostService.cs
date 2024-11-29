@@ -56,6 +56,7 @@ namespace Blog.Services
 
                 // Create a unique filename
                 var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+                // combine the img path with file name
                 var filePath = Path.Combine(imgPath, fileName);
 
                 // Save the file

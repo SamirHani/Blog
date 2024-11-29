@@ -1,7 +1,9 @@
-﻿@model Blog.Models.Profile
+﻿@using System.Security.Claims
+@model Blog.Models.Profile
 
 @{
 	ViewData["Title"] = "User Profile";
+	var userClaimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 }
 
 <!-- Container for the Profile Card -->
@@ -11,22 +13,21 @@
 			<img src="@Model.ImgUrl" alt="Profile Image" class="profile-img mb-3" />
 			<h4 class="card-title">@Model.Name</h4>
 			<p class="card-text">@Model.Bio</p>
+			<a asp-action="Followers" asp-controller="Subscription" asp-route-id="@Model.Name" style="text-decoration:none;"><b>@ViewBag.FollowersCount Followers</b></a>
+			<a asp-action="Following" asp-controller="Subscription" asp-route-id="@Model.Name" style="text-decoration:none;display:inline-block;margin-left:8px;"><b>@ViewBag.FollowingsCount Following</b></a>
+			@if (userClaimId == Model.ApplicationUserId)
+			{
 			<div>
-				<a asp-action="Edit" class="btn btn-primary">Edit Profile</a>
-				<a asp-action="Index" class="btn btn-secondary">Back to List</a>
+					<a asp-action="Edit" asp-route-id="@Model.Name" class="btn btn-primary" style="margin-top:10px;">Edit Profile</a>
 			</div>
+			}
 		</div>
 	</div>
 </div>
 
 <!-- Add custom styles for dark mode -->
 <style>
-	body {
-		background-color: #121212; /* Dark background */
-		color: #ffffff; /* White text */
-	}
 	.profile-card {
-		background-color: #1e1e1e; /* Darker card background */
 		border-radius: 15px;
 		padding: 20px;
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
