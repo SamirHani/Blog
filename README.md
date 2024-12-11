@@ -10,6 +10,9 @@ ASP.NET CORE MVC Complete Project Blog website (Post , Comment  , Like , Follow 
 # Feed
 ![Screenshot 2024-12-11 163128](https://github.com/user-attachments/assets/24afee56-033b-4e32-837c-cf4f8ecee41a)
 
+# Admin Dashboard
+![image](https://github.com/user-attachments/assets/bed34d05-e1ed-4e55-969c-15fdb338085f)
+
 # Comment
 ![Screenshot 2024-12-11 163219](https://github.com/user-attachments/assets/4b43a381-bdec-4748-beda-00b6bd51736f)
 
@@ -19,11 +22,8 @@ ASP.NET CORE MVC Complete Project Blog website (Post , Comment  , Like , Follow 
 # SignUp
 ![Screenshot 2024-12-11 164702](https://github.com/user-attachments/assets/f70a25ab-8c43-4eab-83e3-80690260f4de)
 
-# 
+# Search
 ![Screenshot 2024-12-11 163439](https://github.com/user-attachments/assets/537f7337-b9b5-490b-8965-a52b0162fee1)
-
-# Dashboard
-![image](https://github.com/user-attachments/assets/bed34d05-e1ed-4e55-969c-15fdb338085f)
 
 
 
